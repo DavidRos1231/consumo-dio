@@ -44,6 +44,13 @@ class _ListaState extends State<Lista> {
     }
   }
 
+  // Método para eliminar un post
+  void deletePost(int id) {
+    setState(() {
+      posts.removeWhere((post) => post.id == id); // Eliminar el post de la lista
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,16 +69,41 @@ class _ListaState extends State<Lista> {
                   leading: CircleAvatar(
                     child: Text(post.id.toString()), // Muestra el ID del post
                   ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Botón de editar
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () {
+                          // Navegar a la pantalla de registro con los datos del post
+                          Navigator.pushNamed(
+                            context,
+                            '/register',
+                            arguments: post, // Pasar los datos del post
+                          );
+                        },
+                      ),
+                      // Botón de eliminar
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          // Eliminar el post directamente
+                          deletePost(post.id);
+                        },
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navegar a la pantalla de registro cuando se presiona el botón
+          // Navegar a la pantalla de registro sin datos
           Navigator.pushNamed(context, '/register');
         },
-        tooltip: 'Ir a Registro',
         child: const Icon(Icons.person_add),
+        tooltip: 'Ir a Registro',
       ),
     );
   }
@@ -99,5 +131,15 @@ class Post {
       title: json['title'],
       body: json['body'],
     );
+  }
+
+  // Método para convertir un Post en un Map para JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'userId': userId,
+      'id': id,
+      'title': title,
+      'body': body,
+    };
   }
 }
